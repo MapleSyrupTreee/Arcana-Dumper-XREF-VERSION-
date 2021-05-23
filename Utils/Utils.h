@@ -75,21 +75,6 @@ uintptr_t GetCallingFunctionFromString(const char* string, int xref)
 }
 
 /*
-	This function gets a specific xref of an address for where it is used
-	in other functions
-*/
-uintptr_t GetXref(uintptr_t Address, int xref)
-{
-	auto xref_scan = new scanner::memscan();
-	xref_scan->scan_xrefs(Address);
-	auto results = xref_scan->get_results();
-	auto xrefn = results[xref];
-	auto address = get_prologue<behind>(xrefn);
-	delete xref_scan;
-	return address;
-}
-
-/*
 	This function gets all xrefs of an address
 */
 std::vector<uintptr_t> GetXrefs(uintptr_t Address)
@@ -105,33 +90,4 @@ std::vector<uintptr_t> GetXrefs(uintptr_t Address)
 		Final.push_back(get_prologue<behind>(i));
 	}
 	return Final;
-}
-
-/*
-	This function finds asm code in a given string then returns
-	true or false if it found it
-*/
-bool FindASM(string ASM, string ToFind)
-{
-	return ASM.find(ToFind) != std::string::npos;
-}
-
-/*
-	This function gets the size of a portion of asm code starting
-	at an address then ending at a specific instruction, useful for
-	getting the size of functions
-*/
-int GetSizeTo(uintptr_t Address, string Instruction, int MaxSearch)
-{
-	double size = 0;
-	for (disassembler::inst i : disassembler::read(Address, MaxSearch))
-	{
-		// Check if we have found the instruciton to stop at
-		// add one more to size to count for the instruction we hit
-		if (FindASM(i.data, Instruction)) { size++; break; }
-
-		// add to size as long as we dont hit break
-		size++;
-	}
-	return size;
 }
