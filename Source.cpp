@@ -148,7 +148,7 @@ void main()
 
 	disassembler::open(GetCurrentProcess());
 
-	// Use my smart asm scanning
+	// Find getfield from _LOADED string
 	uintptr_t Getfield = LOADEDInternal[1];
 
 	// get calls from getfield
